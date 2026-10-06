@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "money-mule",
+      "runtimeExecutable": "/Users/user25/gowtham/Personal_Projects/Money-Mule-Detection/.venv/bin/python",
+      "runtimeArgs": ["-m", "backend.main"],
+      "port": 8088
+    }
+  ]
+}

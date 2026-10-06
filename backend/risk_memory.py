@@ -84,3 +84,41 @@ def compare_signature(new_signature):
         similarities.append(similarity)
 
     return max(similarities)
+
+# ---------------------------------
+# Live variants (sliding-window graph)
+# ---------------------------------
+def signature_from_window(store, account_ids, now):
+    """Same five fields as ``extract_cluster_signature`` for the accounts the
+    detector flagged in an attack run, read from the live window graph."""
+    nodes = list(dict.fromkeys(account_ids))
+    if not nodes:
+        return None
+    feats = [store.features(n, now) for n in nodes]
+    members = set(nodes)
+    internal_edges = sum(1 for (s, r) in store.pairs if s in members and r in members)
+    possible = len(nodes) * (len(nodes) - 1)
+    return {
+        "node_count": len(nodes),
+        "avg_in_degree": float(np.mean([f["in_degree"] for f in feats])),
+        "avg_out_degree": float(np.mean([f["out_degree"] for f in feats])),
+        "avg_retention": float(np.mean([f["retention_ratio"] for f in feats])),
+        "density": internal_edges / possible if possible else 0.0,
+    }
+
+
+def signature_similarity(past, new_signature):
+    diff = 0
+    for key in past:
+        # ✅ Normalized difference
+        denom = abs(past[key]) + 1e-6
+        diff += abs(past[key] - new_signature[key]) / denom
+    return float(np.exp(-diff))
+
+
+def best_match(new_signature, memory):
+    """Returns (similarity, index) of the closest stored signature."""
+    if not memory or not new_signature:
+        return 0.0, None
+    scored = [(signature_similarity(past, new_signature), i) for i, past in enumerate(memory)]
+    return max(scored)

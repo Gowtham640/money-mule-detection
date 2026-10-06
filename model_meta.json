@@ -1,0 +1,775 @@
+{
+  "trained_at": "2026-10-06T17:23:07.029148+00:00",
+  "trainer": "backend.train_live",
+  "feature_window_sec": 120.0,
+  "rf_features": [
+    "in_degree",
+    "out_degree",
+    "total_in_amount",
+    "total_out_amount",
+    "retention_ratio",
+    "unique_neighbors",
+    "unique_channels",
+    "device_cluster_size",
+    "transaction_count"
+  ],
+  "gnn_features": [
+    "in_degree",
+    "out_degree",
+    "total_in_amount",
+    "total_out_amount",
+    "retention_ratio",
+    "unique_neighbors",
+    "unique_channels",
+    "device_cluster_size",
+    "transaction_count",
+    "account_age_days"
+  ],
+  "seed": 7,
+  "attacks_simulated": 300,
+  "normal_tx_interval_ms": [
+    250,
+    700
+  ],
+  "attack_step_interval_ms": 700,
+  "rf_eval": {
+    "samples": 12746,
+    "positives": 772,
+    "precision": 0.7437,
+    "recall": 0.8381,
+    "f1": 0.7881,
+    "roc_auc": 0.9781,
+    "normal_flag_rate": 0.0186,
+    "mule_detection_by_type": {
+      "behavioral_drift": 1.0,
+      "circular_ring": 1.0,
+      "cross_channel_burst": 0.6,
+      "dormant_activation": 1.0,
+      "early_volume_spike": 1.0,
+      "fan_in": 0.944,
+      "fan_out": 0.806,
+      "shared_device_cluster": 1.0,
+      "smurfing": 1.0,
+      "velocity_chain": 0.867
+    },
+    "train_samples": 50982,
+    "train_positives": 3129
+  },
+  "rf_sha256": "2029b29cd3d4fbf86d587c89ff02f5a71e09c2cc052049b80cbe3704596289ad",
+  "gnn_eval": {
+    "test_graphs": 550,
+    "test_nodes": 202585,
+    "positives": 4894,
+    "precision": 0.9074,
+    "recall": 0.1941,
+    "f1": 0.3198,
+    "roc_auc": 0.9812,
+    "train_graphs": 2043
+  },
+  "gnn_sha256": "04b87a317daa9ce90b22a8f951b07be08c83059110b9d3ff8ed8c5711875d21a",
+  "decision": {
+    "threshold": 0.68,
+    "min_early_risk": 0.0,
+    "fp_per_hour": 5.42,
+    "mule_recall": 0.4036,
+    "attack_detection_rate": 0.9125,
+    "by_attack_type": {
+      "fan_in": {
+        "runs": 8,
+        "detected_runs": 7,
+        "mules": 48,
+        "mules_flagged": 10
+      },
+      "fan_out": {
+        "runs": 8,
+        "detected_runs": 6,
+        "mules": 48,
+        "mules_flagged": 6
+      },
+      "circular_ring": {
+        "runs": 8,
+        "detected_runs": 8,
+        "mules": 32,
+        "mules_flagged": 17
+      },
+      "velocity_chain": {
+        "runs": 8,
+        "detected_runs": 8,
+        "mules": 40,
+        "mules_flagged": 16
+      },
+      "cross_channel_burst": {
+        "runs": 8,
+        "detected_runs": 8,
+        "mules": 40,
+        "mules_flagged": 8
+      },
+      "shared_device_cluster": {
+        "runs": 8,
+        "detected_runs": 8,
+        "mules": 32,
+        "mules_flagged": 25
+      },
+      "behavioral_drift": {
+        "runs": 8,
+        "detected_runs": 6,
+        "mules": 8,
+        "mules_flagged": 6
+      },
+      "early_volume_spike": {
+        "runs": 8,
+        "detected_runs": 8,
+        "mules": 8,
+        "mules_flagged": 8
+      },
+      "smurfing": {
+        "runs": 8,
+        "detected_runs": 7,
+        "mules": 16,
+        "mules_flagged": 10
+      },
+      "dormant_activation": {
+        "runs": 8,
+        "detected_runs": 7,
+        "mules": 8,
+        "mules_flagged": 7
+      }
+    },
+    "fp_budget_per_hour": 6.0,
+    "stream_hours": 1.11,
+    "attacks": 80,
+    "seed": 1007,
+    "grid": [
+      {
+        "threshold": 0.5,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 102.05,
+        "mule_recall": 0.525,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.5,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 97.54,
+        "mule_recall": 0.5286,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.5,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 93.92,
+        "mule_recall": 0.525,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.5,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 89.41,
+        "mule_recall": 0.525,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.5,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 80.38,
+        "mule_recall": 0.5214,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.52,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 93.92,
+        "mule_recall": 0.5107,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.52,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 90.31,
+        "mule_recall": 0.5143,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.52,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 87.6,
+        "mule_recall": 0.5107,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.52,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 83.09,
+        "mule_recall": 0.5143,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.52,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 74.96,
+        "mule_recall": 0.5143,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.54,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 78.57,
+        "mule_recall": 0.5179,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.54,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 77.67,
+        "mule_recall": 0.5179,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.54,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 75.86,
+        "mule_recall": 0.5143,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.54,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 71.35,
+        "mule_recall": 0.5179,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.54,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 64.12,
+        "mule_recall": 0.5179,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.56,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 64.12,
+        "mule_recall": 0.4964,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.56,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 64.12,
+        "mule_recall": 0.4964,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.56,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 63.22,
+        "mule_recall": 0.4929,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.56,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 59.61,
+        "mule_recall": 0.4929,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.56,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 52.38,
+        "mule_recall": 0.4929,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.58,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 46.96,
+        "mule_recall": 0.4786,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.58,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 46.96,
+        "mule_recall": 0.4786,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.58,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 46.96,
+        "mule_recall": 0.4786,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.58,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 42.45,
+        "mule_recall": 0.475,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.58,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 36.12,
+        "mule_recall": 0.4786,
+        "attack_detection_rate": 0.925
+      },
+      {
+        "threshold": 0.6,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 27.09,
+        "mule_recall": 0.4643,
+        "attack_detection_rate": 0.8875
+      },
+      {
+        "threshold": 0.6,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 27.09,
+        "mule_recall": 0.4643,
+        "attack_detection_rate": 0.8875
+      },
+      {
+        "threshold": 0.6,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 27.09,
+        "mule_recall": 0.4643,
+        "attack_detection_rate": 0.8875
+      },
+      {
+        "threshold": 0.6,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 24.38,
+        "mule_recall": 0.4607,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.6,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 22.58,
+        "mule_recall": 0.4607,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.62,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 19.87,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.62,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 19.87,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.62,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 19.87,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9
+      },
+      {
+        "threshold": 0.62,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 18.06,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.62,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 16.26,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.64,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 13.55,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.64,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 13.55,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.64,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 13.55,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.64,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 12.64,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.64,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 11.74,
+        "mule_recall": 0.45,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.66,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 11.74,
+        "mule_recall": 0.4214,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.66,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 11.74,
+        "mule_recall": 0.4214,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.66,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 11.74,
+        "mule_recall": 0.4214,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.66,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 11.74,
+        "mule_recall": 0.4214,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.66,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 10.84,
+        "mule_recall": 0.4214,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.68,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 5.42,
+        "mule_recall": 0.4036,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.68,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 5.42,
+        "mule_recall": 0.4036,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.68,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 5.42,
+        "mule_recall": 0.4036,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.68,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 5.42,
+        "mule_recall": 0.4036,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.68,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 5.42,
+        "mule_recall": 0.4036,
+        "attack_detection_rate": 0.9125
+      },
+      {
+        "threshold": 0.7,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 1.81,
+        "mule_recall": 0.3607,
+        "attack_detection_rate": 0.8375
+      },
+      {
+        "threshold": 0.7,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 1.81,
+        "mule_recall": 0.3607,
+        "attack_detection_rate": 0.8375
+      },
+      {
+        "threshold": 0.7,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 1.81,
+        "mule_recall": 0.3607,
+        "attack_detection_rate": 0.8375
+      },
+      {
+        "threshold": 0.7,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 1.81,
+        "mule_recall": 0.3607,
+        "attack_detection_rate": 0.8375
+      },
+      {
+        "threshold": 0.7,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 1.81,
+        "mule_recall": 0.3607,
+        "attack_detection_rate": 0.8375
+      },
+      {
+        "threshold": 0.72,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.3107,
+        "attack_detection_rate": 0.7
+      },
+      {
+        "threshold": 0.72,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.3107,
+        "attack_detection_rate": 0.7
+      },
+      {
+        "threshold": 0.72,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.3107,
+        "attack_detection_rate": 0.7
+      },
+      {
+        "threshold": 0.72,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.3107,
+        "attack_detection_rate": 0.7
+      },
+      {
+        "threshold": 0.72,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.3107,
+        "attack_detection_rate": 0.7
+      },
+      {
+        "threshold": 0.74,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.275,
+        "attack_detection_rate": 0.6375
+      },
+      {
+        "threshold": 0.74,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.275,
+        "attack_detection_rate": 0.6375
+      },
+      {
+        "threshold": 0.74,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.275,
+        "attack_detection_rate": 0.6375
+      },
+      {
+        "threshold": 0.74,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.275,
+        "attack_detection_rate": 0.6375
+      },
+      {
+        "threshold": 0.74,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 0.9,
+        "mule_recall": 0.275,
+        "attack_detection_rate": 0.6375
+      },
+      {
+        "threshold": 0.76,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.2214,
+        "attack_detection_rate": 0.475
+      },
+      {
+        "threshold": 0.76,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.2214,
+        "attack_detection_rate": 0.475
+      },
+      {
+        "threshold": 0.76,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.2214,
+        "attack_detection_rate": 0.475
+      },
+      {
+        "threshold": 0.76,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.2214,
+        "attack_detection_rate": 0.475
+      },
+      {
+        "threshold": 0.76,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.2214,
+        "attack_detection_rate": 0.475
+      },
+      {
+        "threshold": 0.78,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.15,
+        "attack_detection_rate": 0.3625
+      },
+      {
+        "threshold": 0.78,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.15,
+        "attack_detection_rate": 0.3625
+      },
+      {
+        "threshold": 0.78,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.15,
+        "attack_detection_rate": 0.3625
+      },
+      {
+        "threshold": 0.78,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.15,
+        "attack_detection_rate": 0.3625
+      },
+      {
+        "threshold": 0.78,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.15,
+        "attack_detection_rate": 0.3625
+      },
+      {
+        "threshold": 0.8,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.1214,
+        "attack_detection_rate": 0.3
+      },
+      {
+        "threshold": 0.8,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.1214,
+        "attack_detection_rate": 0.3
+      },
+      {
+        "threshold": 0.8,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.1214,
+        "attack_detection_rate": 0.3
+      },
+      {
+        "threshold": 0.8,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.1214,
+        "attack_detection_rate": 0.3
+      },
+      {
+        "threshold": 0.8,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.1214,
+        "attack_detection_rate": 0.3
+      },
+      {
+        "threshold": 0.82,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0929,
+        "attack_detection_rate": 0.225
+      },
+      {
+        "threshold": 0.82,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0929,
+        "attack_detection_rate": 0.225
+      },
+      {
+        "threshold": 0.82,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0929,
+        "attack_detection_rate": 0.225
+      },
+      {
+        "threshold": 0.82,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0929,
+        "attack_detection_rate": 0.225
+      },
+      {
+        "threshold": 0.82,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0929,
+        "attack_detection_rate": 0.225
+      },
+      {
+        "threshold": 0.84,
+        "min_early_risk": 0.0,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0571,
+        "attack_detection_rate": 0.175
+      },
+      {
+        "threshold": 0.84,
+        "min_early_risk": 0.1,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0571,
+        "attack_detection_rate": 0.175
+      },
+      {
+        "threshold": 0.84,
+        "min_early_risk": 0.2,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0571,
+        "attack_detection_rate": 0.175
+      },
+      {
+        "threshold": 0.84,
+        "min_early_risk": 0.3,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0571,
+        "attack_detection_rate": 0.175
+      },
+      {
+        "threshold": 0.84,
+        "min_early_risk": 0.4,
+        "fp_per_hour": 0.0,
+        "mule_recall": 0.0571,
+        "attack_detection_rate": 0.175
+      }
+    ]
+  }
+}

@@ -13,44 +13,41 @@ def load_model(model_path="fraud_model.pkl"):
 # Rule-Based Fraud Detection
 # -----------------------------
 
+# Each rule: (key, reason label, points, predicate on a feature row).
+# The batch function below and the live pipeline both evaluate this list.
+RULES = [
+    ("fan_in", "High In-Degree", 2, lambda r: r["in_degree"] >= 2),
+    ("fan_out", "High Out-Degree", 2, lambda r: r["out_degree"] >= 2),
+    ("pass_through", "Low Retention Ratio", 2,
+     lambda r: r["retention_ratio"] < 0.2 and r["total_in_amount"] > 0),
+    ("shared_device", "Shared Device Cluster", 3, lambda r: r["device_cluster_size"] > 2),
+    ("channel_burst", "High Channel Diversity", 2, lambda r: r["unique_channels"] > 2),
+    ("high_velocity", "High Transaction Count", 1, lambda r: r["transaction_count"] >= 3),
+]
+MAX_RULE_SCORE = sum(points for _, _, points, _ in RULES)
+
+
+def evaluate_rules(row):
+    """Returns (score, {rule_key: fired}, [reasons]) for one feature row."""
+    score = 0
+    flags = {}
+    reasons = []
+    for key, label, points, predicate in RULES:
+        fired = bool(predicate(row))
+        flags[key] = fired
+        if fired:
+            score += points
+            reasons.append(label)
+    return score, flags, reasons
+
+
 def rule_based_detection(features_df):
 
     risk_results = []
 
     for _, row in features_df.iterrows():
 
-        score = 0
-        reasons = []
-
-        # Fan-In
-        if row["in_degree"] >= 2:
-            score += 2
-            reasons.append("High In-Degree")
-
-        # Fan-Out
-        if row["out_degree"] >= 2:
-            score += 2
-            reasons.append("High Out-Degree")
-
-        # Money Passing Through
-        if row["retention_ratio"] < 0.2 and row["total_in_amount"] > 0:
-            score += 2
-            reasons.append("Low Retention Ratio")
-
-        # Shared Device
-        if row["device_cluster_size"] > 2:
-            score += 3
-            reasons.append("Shared Device Cluster")
-
-        # Channel Burst
-        if row["unique_channels"] > 2:
-            score += 2
-            reasons.append("High Channel Diversity")
-
-        # High Transaction Volume
-        if row["transaction_count"] >= 3:
-            score += 1
-            reasons.append("High Transaction Count")
+        score, _, reasons = evaluate_rules(row)
 
         risk_results.append({
             "account_id": row["account_id"],
@@ -155,6 +152,20 @@ def ml_predict(model, features_df, risk_df, threshold=0.5):
 
     return merged
 
+def fuse_scores(rf_score, rule_score, gnn_score=None):
+    """Live per-account version of the hybrid score in ``ml_predict``.
+
+    Same weights (0.5 ML + 0.3 rules + 0.2 GNN, or 0.6/0.4 without the GNN).
+    ``ml_predict`` normalises rule points by the batch maximum; a single
+    account has no batch, so points are normalised by the maximum attainable
+    rule score instead.
+    """
+    rule_norm = float(rule_score) / MAX_RULE_SCORE
+    if gnn_score is None:
+        return 0.6 * float(rf_score) + 0.4 * rule_norm
+    return 0.5 * float(rf_score) + 0.3 * rule_norm + 0.2 * float(gnn_score)
+
+
 def explain_risk_categories(shap_values, feature_columns):
 
     category_map = {
@@ -203,47 +214,48 @@ def explain_risk_categories(shap_values, feature_columns):
 # -----------------------------
 # Fraud Role Classification
 # -----------------------------
+def classify_role(row):
+
+    # 1️⃣ Ring Coordinator (strongest structural pattern)
+    if (
+        row["in_degree"] >= 2 and
+        row["out_degree"] >= 2 and
+        row["unique_neighbors"] >= 3
+    ):
+        return "Ring Coordinator"
+
+    # 2️⃣ Distributor Mule
+    if row["out_degree"] > row["in_degree"] and row["retention_ratio"] < 0.3:
+        return "Distributor Mule"
+
+    # 3️⃣ Collector Mule
+    if row["in_degree"] > row["out_degree"] and row["retention_ratio"] < 0.3:
+        return "Collector Mule"
+
+    # Pass-Through Mule: balanced in/out that keeps almost nothing (the
+    # in == out case the two rules above do not cover, e.g. ring members)
+    if row["in_degree"] >= 1 and row["out_degree"] >= 1 and row["retention_ratio"] < 0.3:
+        return "Pass-Through Mule"
+
+    # 4️⃣ Entry Node
+    if row["in_degree"] == 0 and row["out_degree"] > 0:
+        return "Entry Node"
+
+    # 5️⃣ Exit Node
+    if row["in_degree"] > 0 and row["retention_ratio"] > 0.6:
+        return "Exit Node"
+
+    return "Unclassified"
+
+
 def classify_fraud_roles(features_df):
 
     roles = []
 
     for _, row in features_df.iterrows():
-
-        role = "Unclassified"
-
-        # 1️⃣ Ring Coordinator (strongest structural pattern)
-        if (
-            row["in_degree"] >= 2 and
-            row["out_degree"] >= 2 and
-            row["unique_neighbors"] >= 3
-        ):
-            role = "Ring Coordinator"
-
-        # 2️⃣ Distributor Mule
-        elif (
-            row["out_degree"] > row["in_degree"] and
-            row["retention_ratio"] < 0.3
-        ):
-            role = "Distributor Mule"
-
-        # 3️⃣ Collector Mule
-        elif (
-            row["in_degree"] > row["out_degree"] and
-            row["retention_ratio"] < 0.3
-        ):
-            role = "Collector Mule"
-
-        # 4️⃣ Entry Node
-        elif row["in_degree"] == 0 and row["out_degree"] > 0:
-            role = "Entry Node"
-
-        # 5️⃣ Exit Node
-        elif row["in_degree"] > 0 and row["retention_ratio"] > 0.6:
-            role = "Exit Node"
-
         roles.append({
             "account_id": row["account_id"],
-            "role": role
+            "role": classify_role(row)
         })
 
     return pd.DataFrame(roles)
@@ -453,6 +465,39 @@ def behavioral_drift_detection(
         "drift_score", ascending=False
     ).reset_index(drop=True)
 
+DRIFT_SCALE_FLOOR = {
+    "in_degree": 1.0,
+    "out_degree": 1.0,
+    "total_in_amount": 5000.0,
+    "total_out_amount": 5000.0,
+    "retention_ratio": 0.25,
+    "unique_neighbors": 1.0,
+    "unique_channels": 1.0,
+    "device_cluster_size": 1.0,
+    "transaction_count": 1.0,
+}
+
+
+def behavioral_drift_score(baseline_row, current_row, population_std, feature_columns):
+    """Live drift for one account against its own earlier window.
+
+    ``behavioral_drift_detection`` standardises each feature using only the
+    two vectors being compared, so any change maps to +/-1 and the score just
+    counts changed features. Here each feature difference is scaled by the
+    population spread at baseline time (with a floor), giving an RMS z-score.
+    Returns (score, [top changed features]).
+    """
+    z = []
+    for column in feature_columns:
+        scale = max(float(population_std.get(column, 0.0)), DRIFT_SCALE_FLOOR.get(column, 1.0))
+        z.append((float(current_row.get(column, 0.0)) - float(baseline_row.get(column, 0.0))) / scale)
+    z = np.array(z)
+    score = float(np.sqrt(np.mean(z ** 2))) if len(z) else 0.0
+    order = np.argsort(np.abs(z))[::-1]
+    top = [feature_columns[i] for i in order[:3] if abs(z[i]) >= 1.0]
+    return round(score, 4), top
+
+
 def adaptive_threshold_update(current_threshold, report):
 
     if "1" not in report:
@@ -461,7 +506,9 @@ def adaptive_threshold_update(current_threshold, report):
     fraud_recall = report["1"]["recall"]
     fraud_precision = report["1"]["precision"]
 
-    adjustment = 0.02 * (fraud_precision - fraud_recall)
+    # Missing mules (recall < precision) lowers the threshold; false
+    # positives (precision < recall) raise it. The original sign was inverted.
+    adjustment = 0.1 * (fraud_recall - fraud_precision)
 
     # ✅ Smooth update (momentum-based)
     target_threshold = current_threshold + adjustment

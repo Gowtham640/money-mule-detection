@@ -1,5 +1,6 @@
 import pandas as pd
 import random
+import random as _random
 from datetime import datetime, timedelta
 from backend.config import NUM_ACCOUNTS, NUM_TRANSACTIONS
 import numpy as np
@@ -8,12 +9,21 @@ CHANNELS   = ["UPI", "NEFT", "IMPS", "ATM", "Mobile"]
 START_DATE = datetime.now() - timedelta(days=30)
 
 
-def generate_accounts(num_accounts=NUM_ACCOUNTS):
+def generate_accounts(num_accounts=NUM_ACCOUNTS, rng=None):
+    random     = rng or _random
     accounts   = []
     today      = datetime.now()
-    num_devices = max(25, num_accounts // 10)
+    # Most customers use their own phone; ~6% share a device with another
+    # account (household). Previously ~10 accounts per device, which made
+    # "shared device" true for every account and useless as a signal.
+    device_ids = []
 
     for i in range(num_accounts):
+        if device_ids and random.random() < 0.06:
+            device_id = random.choice(device_ids)
+        else:
+            device_id = f"D{str(len(device_ids) + 1).zfill(3)}"
+        device_ids.append(device_id)
         account_id = f"A{str(i+1).zfill(4)}"
         rand = random.random()
         if rand < 0.20:
@@ -26,7 +36,7 @@ def generate_accounts(num_accounts=NUM_ACCOUNTS):
         accounts.append({
             "account_id":    account_id,
             "creation_time": today - timedelta(days=age_days),
-            "device_id":     f"D{str(random.randint(1, num_devices)).zfill(3)}",
+            "device_id":     device_id,
             "ip_address":    f"192.168.{random.randint(0,255)}.{random.randint(1,254)}",
             "balance":       random.randint(5000, 500000),
             "channel":       random.choice(CHANNELS),

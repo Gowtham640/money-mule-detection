@@ -1,7 +1,5 @@
 import pandas as pd
 import networkx as nx
-import matplotlib.pyplot as plt
-from pyvis.network import Network
 import tempfile
 import os
 
@@ -38,6 +36,8 @@ def build_transaction_graph(accounts_df, transactions_df):
 # -----------------------------
 
 def visualize_fraud_subgraph(G):
+
+    from pyvis.network import Network  # optional dependency, only for this export
 
     if G.number_of_nodes() == 0:
         return None
